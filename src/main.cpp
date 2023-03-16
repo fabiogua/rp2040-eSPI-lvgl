@@ -32,8 +32,22 @@ lv_indev_drv_t indev_drv;
 lv_obj_t *ui_labelSpeed;
 lv_obj_t *ui_labelCurrent;
 lv_obj_t *ui_labelVolt;
+lv_obj_t *ui_labelAirTemp;
+lv_obj_t *ui_labelMotorTemp;
 lv_obj_t *ui_barVoltage;
-lv_obj_t *ui_arcCurrent;
+lv_obj_t *ui_barCurrent;
+lv_obj_t *ui_panelRtd;
+lv_obj_t *ui_panelCi;
+lv_obj_t *ui_panelCal;
+lv_obj_t *ui_panelBms;
+lv_obj_t *ui_panelImd;
+lv_obj_t *ui_panelRgb;
+lv_obj_t *ui_Label1;
+lv_obj_t *ui_Label2;
+lv_obj_t *ui_Label3;
+lv_obj_t *ui_Label4;
+lv_obj_t *ui_Label5;
+lv_obj_t *ui_Label6;
 
 TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
@@ -129,27 +143,40 @@ void setup()
   disp_drv.draw_buf = &draw_buf;
   lv_disp_drv_register(&disp_drv);
 
+  
+  ui_labelAirTemp = lv_label_create(lv_scr_act());
+  lv_obj_set_width(ui_labelAirTemp, LV_SIZE_CONTENT);   /// 1
+  lv_obj_set_height(ui_labelAirTemp, LV_SIZE_CONTENT);    /// 1
+  lv_obj_set_x(ui_labelAirTemp, -30);
+  lv_obj_set_y(ui_labelAirTemp, -122);
+  lv_obj_set_align(ui_labelAirTemp, LV_ALIGN_CENTER);
+  lv_label_set_text(ui_labelAirTemp, "Airtemp: 0°C");
+
+  ui_labelMotorTemp = lv_label_create(lv_scr_act());
+  lv_obj_set_width(ui_labelMotorTemp, LV_SIZE_CONTENT);   /// 1
+  lv_obj_set_height(ui_labelMotorTemp, LV_SIZE_CONTENT);    /// 1
+  lv_obj_set_x(ui_labelMotorTemp, -30);
+  lv_obj_set_y(ui_labelMotorTemp, -100);
+  lv_obj_set_align(ui_labelMotorTemp, LV_ALIGN_CENTER);
+  lv_label_set_text(ui_labelMotorTemp, "Motortemp 0°C");
+
   ui_barVoltage = lv_bar_create(lv_scr_act());
   lv_bar_set_range(ui_barVoltage, 240, 403);
   lv_bar_set_value(ui_barVoltage, 240, LV_ANIM_OFF);
   lv_obj_set_width(ui_barVoltage, 200);
-  lv_obj_set_height(ui_barVoltage, 50);
+  lv_obj_set_height(ui_barVoltage, 30);
   lv_obj_set_x(ui_barVoltage, 0);
-  lv_obj_set_y(ui_barVoltage, 100);
+  lv_obj_set_y(ui_barVoltage, 75);
   lv_obj_set_align(ui_barVoltage, LV_ALIGN_CENTER);
 
-  ui_arcCurrent = lv_arc_create(lv_scr_act());
-  lv_obj_set_width(ui_arcCurrent, 200);
-  lv_obj_set_height(ui_arcCurrent, 200);
-  lv_obj_set_x(ui_arcCurrent, 6);
-  lv_obj_set_y(ui_arcCurrent, -35);
-  lv_obj_set_align(ui_arcCurrent, LV_ALIGN_CENTER);
-  lv_obj_set_style_arc_width(ui_arcCurrent, 30, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_arc_rounded(ui_arcCurrent, false, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_opa(ui_arcCurrent, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-  lv_obj_set_style_arc_width(ui_arcCurrent, 30, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-  lv_obj_set_style_arc_rounded(ui_arcCurrent, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+  ui_barCurrent = lv_bar_create(lv_scr_act());
+  lv_bar_set_range(ui_barCurrent, 0, 100);
+  lv_bar_set_value(ui_barCurrent, 0, LV_ANIM_OFF);
+  lv_obj_set_width(ui_barCurrent, 200);
+  lv_obj_set_height(ui_barCurrent, 30);
+  lv_obj_set_x(ui_barCurrent, 0);
+  lv_obj_set_y(ui_barCurrent, 30);
+  lv_obj_set_align(ui_barCurrent, LV_ALIGN_CENTER);
 
   ui_labelSpeed = lv_label_create(lv_scr_act());
   lv_obj_set_width(ui_labelSpeed, LV_SIZE_CONTENT);  /// 1
@@ -160,8 +187,8 @@ void setup()
   lv_label_set_text(ui_labelSpeed, "100 km/h");
 
   ui_labelCurrent = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_labelCurrent, LV_SIZE_CONTENT);  /// 1
-  lv_obj_set_height(ui_labelCurrent, LV_SIZE_CONTENT); /// 1
+  lv_obj_set_width(ui_labelCurrent, LV_SIZE_CONTENT);   /// 1
+  lv_obj_set_height(ui_labelCurrent, LV_SIZE_CONTENT);    /// 1
   lv_obj_set_x(ui_labelCurrent, 3);
   lv_obj_set_y(ui_labelCurrent, 30);
   lv_obj_set_align(ui_labelCurrent, LV_ALIGN_CENTER);
@@ -170,10 +197,11 @@ void setup()
   ui_labelVolt = lv_label_create(lv_scr_act());
   lv_obj_set_width(ui_labelVolt, LV_SIZE_CONTENT);  /// 1
   lv_obj_set_height(ui_labelVolt, LV_SIZE_CONTENT); /// 1
-  lv_obj_set_x(ui_labelVolt, 4);
-  lv_obj_set_y(ui_labelVolt, 100);
+  lv_obj_set_x(ui_labelVolt, 0);
+  lv_obj_set_y(ui_labelVolt, 75);
   lv_obj_set_align(ui_labelVolt, LV_ALIGN_CENTER);
   lv_label_set_text(ui_labelVolt, "240V");
+
   // Initialize the input device driver
   //  static lv_indev_drv_t indev_drv;
   lv_indev_drv_init(&indev_drv);
@@ -181,42 +209,109 @@ void setup()
   indev_drv.read_cb = my_touchpad_read;
   lv_indev_drv_register(&indev_drv);
 
+  ui_panelRtd = lv_obj_create(lv_scr_act());
+  lv_obj_set_width(ui_panelRtd, 30);
+  lv_obj_set_height(ui_panelRtd, 30);
+  lv_obj_set_x(ui_panelRtd, -90);
+  lv_obj_set_y(ui_panelRtd, 130);
+  lv_obj_set_align(ui_panelRtd, LV_ALIGN_CENTER);
+  lv_obj_clear_flag(ui_panelRtd, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+
+  ui_panelCi = lv_obj_create(lv_scr_act());
+  lv_obj_set_width(ui_panelCi, 30);
+  lv_obj_set_height(ui_panelCi, 30);
+  lv_obj_set_x(ui_panelCi, -55);
+  lv_obj_set_y(ui_panelCi, 130);
+  lv_obj_set_align(ui_panelCi, LV_ALIGN_CENTER);
+  lv_obj_clear_flag(ui_panelCi, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+
+  ui_panelCal = lv_obj_create(lv_scr_act());
+  lv_obj_set_width(ui_panelCal, 30);
+  lv_obj_set_height(ui_panelCal, 30);
+  lv_obj_set_x(ui_panelCal, -20);
+  lv_obj_set_y(ui_panelCal, 130);
+  lv_obj_set_align(ui_panelCal, LV_ALIGN_CENTER);
+  lv_obj_clear_flag(ui_panelCal, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+
+  ui_panelBms = lv_obj_create(lv_scr_act());
+  lv_obj_set_width(ui_panelBms, 30);
+  lv_obj_set_height(ui_panelBms, 30);
+  lv_obj_set_x(ui_panelBms, 20);
+  lv_obj_set_y(ui_panelBms, 130);
+  lv_obj_set_align(ui_panelBms, LV_ALIGN_CENTER);
+  lv_obj_clear_flag(ui_panelBms, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+
+  ui_panelImd = lv_obj_create(lv_scr_act());
+  lv_obj_set_width(ui_panelImd, 30);
+  lv_obj_set_height(ui_panelImd, 30);
+  lv_obj_set_x(ui_panelImd, 55);
+  lv_obj_set_y(ui_panelImd, 130);
+  lv_obj_set_align(ui_panelImd, LV_ALIGN_CENTER);
+  lv_obj_clear_flag(ui_panelImd, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+
+  ui_panelRgb = lv_obj_create(lv_scr_act());
+  lv_obj_set_width(ui_panelRgb, 30);
+  lv_obj_set_height(ui_panelRgb, 30);
+  lv_obj_set_x(ui_panelRgb, 90);
+  lv_obj_set_y(ui_panelRgb, 130);
+  lv_obj_set_align(ui_panelRgb, LV_ALIGN_CENTER);
+  lv_obj_clear_flag(ui_panelRgb, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+
+  ui_Label2 = lv_label_create(lv_scr_act());
+  lv_obj_set_width(ui_Label2, LV_SIZE_CONTENT);  /// 1
+  lv_obj_set_height(ui_Label2, LV_SIZE_CONTENT); /// 1
+  lv_obj_set_x(ui_Label2, -90);
+  lv_obj_set_y(ui_Label2, 105);
+  lv_obj_set_align(ui_Label2, LV_ALIGN_CENTER);
+  lv_label_set_text(ui_Label2, "RTD");
+
+  ui_Label1 = lv_label_create(lv_scr_act());
+  lv_obj_set_width(ui_Label1, LV_SIZE_CONTENT);  /// 1
+  lv_obj_set_height(ui_Label1, LV_SIZE_CONTENT); /// 1
+  lv_obj_set_x(ui_Label1, -55);
+  lv_obj_set_y(ui_Label1, 105);
+  lv_obj_set_align(ui_Label1, LV_ALIGN_CENTER);
+  lv_label_set_text(ui_Label1, "CI");
+
+  ui_Label3 = lv_label_create(lv_scr_act());
+  lv_obj_set_width(ui_Label3, LV_SIZE_CONTENT);  /// 1
+  lv_obj_set_height(ui_Label3, LV_SIZE_CONTENT); /// 1
+  lv_obj_set_x(ui_Label3, -20);
+  lv_obj_set_y(ui_Label3, 105);
+  lv_obj_set_align(ui_Label3, LV_ALIGN_CENTER);
+  lv_label_set_text(ui_Label3, "CAL");
+
+  ui_Label4 = lv_label_create(lv_scr_act());
+  lv_obj_set_width(ui_Label4, LV_SIZE_CONTENT);  /// 1
+  lv_obj_set_height(ui_Label4, LV_SIZE_CONTENT); /// 1
+  lv_obj_set_x(ui_Label4, 20);
+  lv_obj_set_y(ui_Label4, 105);
+  lv_obj_set_align(ui_Label4, LV_ALIGN_CENTER);
+  lv_label_set_text(ui_Label4, "BMS");
+
+  ui_Label5 = lv_label_create(lv_scr_act());
+  lv_obj_set_width(ui_Label5, LV_SIZE_CONTENT);  /// 1
+  lv_obj_set_height(ui_Label5, LV_SIZE_CONTENT); /// 1
+  lv_obj_set_x(ui_Label5, 55);
+  lv_obj_set_y(ui_Label5, 105);
+  lv_obj_set_align(ui_Label5, LV_ALIGN_CENTER);
+  lv_label_set_text(ui_Label5, "IMD");
+
+  ui_Label6 = lv_label_create(lv_scr_act());
+  lv_obj_set_width(ui_Label6, LV_SIZE_CONTENT);  /// 1
+  lv_obj_set_height(ui_Label6, LV_SIZE_CONTENT); /// 1
+  lv_obj_set_x(ui_Label6, 90);
+  lv_obj_set_y(ui_Label6, 105);
+  lv_obj_set_align(ui_Label6, LV_ALIGN_CENTER);
+  lv_label_set_text(ui_Label6, "RGB");
+
   // add a cursor
   mouse_indev = lv_indev_drv_register(&indev_drv);
   // LV_IMG_DECLARE(mouse_cursor_icon);                  //Declare the image source.
   cursor_obj = lv_img_create(lv_scr_act());     // Create an image object for the cursor
   lv_img_set_src(cursor_obj, LV_SYMBOL_GPS);    // Set the image source
   lv_indev_set_cursor(mouse_indev, cursor_obj); // Connect the image  object to the driver
-  /*
 
-  // Create simple label
-  lv_obj_t *label = lv_label_create(lv_scr_act());
-  lv_label_set_text(label, LVGL_Arduino.c_str());
-  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-
-  labelPoint = lv_label_create(lv_scr_act());
-  lv_obj_align(labelPoint, LV_ALIGN_CENTER, 0, 20);
-
-  labelCurrent = lv_label_create(lv_scr_act());
-  lv_obj_align(labelCurrent, LV_ALIGN_CENTER, 0, 40);
-
-  labelVoltage = lv_label_create(lv_scr_act());
-  lv_obj_align(labelVoltage, LV_ALIGN_CENTER, 0, 60);
-
-  labelSpeed = lv_label_create(lv_scr_act());
-  lv_obj_align(labelSpeed, LV_ALIGN_CENTER, 0, 80);
-
-  roller1 = lv_roller_create(lv_scr_act());
-  lv_roller_set_options(roller1,
-                        "Welcome\n"
-                        "My\n"
-                        "Program",
-                        LV_ROLLER_MODE_INFINITE);
-  lv_roller_set_visible_row_count(roller1, 4);
-  lv_obj_center(roller1);
-  lv_obj_add_event_cb(roller1, event_handler, LV_EVENT_ALL, NULL);
-  lv_obj_align(roller1, LV_ALIGN_CENTER, 0, -80);
-  */
   Serial.println("Setup done");
 }
 
@@ -224,7 +319,6 @@ void loop()
 {
   while (CANReceiver.read(msg))
   {
-    // toggle LEDs
     if (msg.buf[0] == 16)
     {
       if (msg.buf[1] == 0)
@@ -242,20 +336,58 @@ void loop()
         uint16_t current16 = ((uint16_t)msg.buf[6] << 8) | (uint16_t)msg.buf[7];
         float current = (float)current16 / 100.0;
         lv_label_set_text_fmt(ui_labelCurrent, "%.2f A", current);
-        lv_arc_set_value(ui_arcCurrent, (current16 / 100));
+        lv_bar_set_value(ui_barCurrent, (current16 / 100), LV_ANIM_OFF);
       }
       else if (msg.buf[1] == 1)
       {
         Serial.print("MotorTemp ");
         Serial.println(msg.buf[2]);
+        lv_label_set_text_fmt(ui_labelMotorTemp, "MotorTemp: %d°C", msg.buf[2]);
+
 
         Serial.print("AirTemp ");
         Serial.println(msg.buf[3]);
+        lv_label_set_text_fmt(ui_labelAirTemp, "Airtemp: %d°C", msg.buf[3]);
+
 
         uint16_t dcVoltage16 = ((uint16_t)msg.buf[4] << 8) | (uint16_t)msg.buf[5];
         float dcVoltage = (float)dcVoltage16 / 100.0;
         lv_label_set_text_fmt(ui_labelVolt, "%.2f V", dcVoltage);
         lv_bar_set_value(ui_barVoltage, (dcVoltage16 / 100), LV_ANIM_OFF);
+      }
+    }else if(msg.buf[0]==208){
+      if(msg.buf[1]==0){
+        lv_obj_set_style_bg_color(ui_panelBms, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+      }else{
+        lv_obj_set_style_bg_color(ui_panelBms, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+      }
+      Serial.print("BMS: 208 ");
+      Serial.println(msg.buf[1]);
+    }else if(msg.buf[0]==209){
+      if(msg.buf[1]==0){
+        lv_obj_set_style_bg_color(ui_panelImd, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+      }else{
+        lv_obj_set_style_bg_color(ui_panelImd, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+      }
+      Serial.print("IMD: 209 ");
+      Serial.println(msg.buf[1]);
+    }else if(msg.buf[0]==116){
+      if(((msg.buf[1] >> 7) & 0x1)==0){
+        lv_obj_set_style_bg_color(ui_panelRtd, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+      }else{
+        lv_obj_set_style_bg_color(ui_panelRtd, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+      }
+    }else if(msg.buf[0]==115){
+      if(((msg.buf[1] >> 7) & 0x1)==0){
+        lv_obj_set_style_bg_color(ui_panelCal, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+      }else{
+        lv_obj_set_style_bg_color(ui_panelCal, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+      }
+    }else if(msg.buf[0]==120){
+      if(((msg.buf[1] >> 7) & 0x1)==0){
+        lv_obj_set_style_bg_color(ui_panelRgb, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+      }else{
+        lv_obj_set_style_bg_color(ui_panelRgb, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
       }
     }
   }
