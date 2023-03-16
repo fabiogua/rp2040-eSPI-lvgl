@@ -142,7 +142,7 @@ typedef int16_t lv_coord_t;
  *==================*/
 
 /*1: Enable the Animations */
-#define LV_USE_ANIMATION        1
+#define LV_USE_ANIMATION        0
 #if LV_USE_ANIMATION
 
 /*Declare the type of the user data of animations (can be e.g. `void *`, `int`, `struct`)*/
@@ -151,7 +151,7 @@ typedef void * lv_anim_user_data_t;
 #endif
 
 /* 1: Enable shadow drawing*/
-#define LV_USE_SHADOW           1
+#define LV_USE_SHADOW           0
 #if LV_USE_SHADOW
 /* Allow buffering some shadow calculation
  * LV_SHADOW_CACHE_SIZE is the max. shadow size to buffer,
@@ -161,16 +161,15 @@ typedef void * lv_anim_user_data_t;
 #endif
 
 /* 1: Use other blend modes than normal (`LV_BLEND_MODE_...`)*/
-#define LV_USE_BLEND_MODES      1
+#define LV_USE_BLEND_MODES      0
 
 /* 1: Use the `opa_scale` style property to set the opacity of an object and its children at once*/
-#define LV_USE_OPA_SCALE        1
+#define LV_USE_OPA_SCALE        0
 
 /* 1: Use image zoom and rotation*/
-#define LV_USE_IMG_TRANSFORM    1
-
+#define LV_USE_IMG_TRANSFORM    0
 /* 1: Enable object groups (for keyboard/encoder navigation) */
-#define LV_USE_GROUP            1
+#define LV_USE_GROUP            0
 #if LV_USE_GROUP
 typedef void * lv_group_user_data_t;
 #endif  /*LV_USE_GROUP*/
@@ -190,7 +189,7 @@ typedef void * lv_fs_drv_user_data_t;
 #define LV_USE_USER_DATA        0
 
 /*1: Show CPU usage and FPS count in the right bottom corner*/
-#define LV_USE_PERF_MONITOR     0
+#define LV_USE_PERF_MONITOR     1
 
 /*1: Use the functions and types from the older API if possible */
 #define LV_USE_API_EXTENSION_V6  1
@@ -200,10 +199,10 @@ typedef void * lv_fs_drv_user_data_t;
  *========================*/
 
 /* 1: Enable indexed (palette) images */
-#define LV_IMG_CF_INDEXED       1
+#define LV_IMG_CF_INDEXED       0
 
 /* 1: Enable alpha indexed images */
-#define LV_IMG_CF_ALPHA         1
+#define LV_IMG_CF_ALPHA         0
 
 /* Default image cache size. Image caching keeps the images opened.
  * If only the built-in image formats are used there is no real advantage of caching.
@@ -211,7 +210,7 @@ typedef void * lv_fs_drv_user_data_t;
  * With complex image decoders (e.g. PNG or JPG) caching can save the continuous open/decode of images.
  * However the opened images might consume additional RAM.
  * LV_IMG_CACHE_DEF_SIZE must be >= 1 */
-#define LV_IMG_CACHE_DEF_SIZE       1
+#define LV_IMG_CACHE_DEF_SIZE       0
 
 /*Declare the type of the user data of image decoder (can be e.g. `void *`, `int`, `struct`)*/
 typedef void * lv_img_decoder_user_data_t;
@@ -298,7 +297,7 @@ typedef void * lv_indev_drv_user_data_t;            /*Type of user data in the i
  * The behavior of asserts can be overwritten by redefining them here.
  * E.g. #define LV_ASSERT_MEM(p)  <my_assert_code>
  */
-#define LV_USE_DEBUG        1
+#define LV_USE_DEBUG        0
 #if LV_USE_DEBUG
 
 /*Check if the parameter is NULL. (Quite fast) */
@@ -393,14 +392,27 @@ typedef void * lv_font_user_data_t;
  *================*/
 
 /*Always enable at least on theme*/
+/*A simple, impressive and very complete theme*/
+#define LV_USE_THEME_DEFAULT 1
+#if LV_USE_THEME_DEFAULT
+
+    /*0: Light mode; 1: Dark mode*/
+    #define LV_THEME_DEFAULT_DARK 1
+
+    /*1: Enable grow on press*/
+    #define LV_THEME_DEFAULT_GROW 0
+
+    /*Default transition time in [ms]*/
+    #define LV_THEME_DEFAULT_TRANSITION_TIME 0
+#endif /*LV_USE_THEME_DEFAULT*/
 
 /* No theme, you can apply your styles as you need
  * No flags. Set LV_THEME_DEFAULT_FLAG 0 */
- #define LV_USE_THEME_EMPTY       1
+ #define LV_USE_THEME_EMPTY       0
 
 /*Simple to the create your theme based on it
  * No flags. Set LV_THEME_DEFAULT_FLAG 0 */
- #define LV_USE_THEME_TEMPLATE    1
+ #define LV_USE_THEME_TEMPLATE    0
 
 /* A fast and impressive theme.
  * Flags:
@@ -413,13 +425,13 @@ typedef void * lv_font_user_data_t;
  * texts and borders will be black and the background will be
  * white. Else the colors are inverted.
  * No flags. Set LV_THEME_DEFAULT_FLAG 0 */
- #define LV_USE_THEME_MONO        1
+ #define LV_USE_THEME_MONO        0
 
 #define LV_THEME_DEFAULT_INCLUDE            <stdint.h>      /*Include a header for the init. function*/
 #define LV_THEME_DEFAULT_INIT               lv_theme_material_init
 #define LV_THEME_DEFAULT_COLOR_PRIMARY      LV_COLOR_RED
 #define LV_THEME_DEFAULT_COLOR_SECONDARY    LV_COLOR_BLUE
-#define LV_THEME_DEFAULT_FLAG               LV_THEME_MATERIAL_FLAG_LIGHT
+#define LV_THEME_DEFAULT_FLAG               LV_THEME_MATERIAL_FLAG_DARK
 #define LV_THEME_DEFAULT_FONT_SMALL         &lv_font_montserrat_16
 #define LV_THEME_DEFAULT_FONT_NORMAL        &lv_font_montserrat_16
 #define LV_THEME_DEFAULT_FONT_SUBTITLE      &lv_font_montserrat_16
@@ -523,51 +535,51 @@ typedef void * lv_obj_user_data_t;
 #define LV_USE_BTN      1
 
 /*Button matrix (dependencies: -)*/
-#define LV_USE_BTNMATRIX     1
+#define LV_USE_BTNMATRIX     0
 
 /*Calendar (dependencies: -)*/
-#define LV_USE_CALENDAR 1
+#define LV_USE_CALENDAR 0
 
 /*Canvas (dependencies: lv_img)*/
-#define LV_USE_CANVAS   1
+#define LV_USE_CANVAS   0
 
 /*Check box (dependencies: lv_btn, lv_label)*/
-#define LV_USE_CHECKBOX       1
+#define LV_USE_CHECKBOX       0
 
 /*Chart (dependencies: -)*/
-#define LV_USE_CHART    1
+#define LV_USE_CHART    0
 #if LV_USE_CHART
 #  define LV_CHART_AXIS_TICK_LABEL_MAX_LEN    256
 #endif
 
 /*Container (dependencies: -*/
-#define LV_USE_CONT     1
+#define LV_USE_CONT     0
 
 /*Color picker (dependencies: -*/
-#define LV_USE_CPICKER   1
+#define LV_USE_CPICKER   0
 
 /*Drop down list (dependencies: lv_page, lv_label, lv_symbol_def.h)*/
-#define LV_USE_DROPDOWN    1
+#define LV_USE_DROPDOWN    0
 #if LV_USE_DROPDOWN != 0
 /*Open and close default animation time [ms] (0: no animation)*/
 #  define LV_DROPDOWN_DEF_ANIM_TIME     200
 #endif
 
 /*Gauge (dependencies:lv_bar, lv_linemeter)*/
-#define LV_USE_GAUGE    1
+#define LV_USE_GAUGE    0
 
 /*Image (dependencies: lv_label*/
 #define LV_USE_IMG      1
 
 /*Image Button (dependencies: lv_btn*/
-#define LV_USE_IMGBTN   1
+#define LV_USE_IMGBTN   0
 #if LV_USE_IMGBTN
 /*1: The imgbtn requires left, mid and right parts and the width can be set freely*/
 #  define LV_IMGBTN_TILED 0
 #endif
 
 /*Keyboard (dependencies: lv_btnm)*/
-#define LV_USE_KEYBOARD       1
+#define LV_USE_KEYBOARD       0
 
 /*Label (dependencies: -*/
 #define LV_USE_LABEL    1
@@ -586,24 +598,24 @@ typedef void * lv_obj_user_data_t;
 #endif
 
 /*LED (dependencies: -)*/
-#define LV_USE_LED      1
+#define LV_USE_LED      0
 #if LV_USE_LED
 #  define LV_LED_BRIGHT_MIN  120      /*Minimal brightness*/
 #  define LV_LED_BRIGHT_MAX  255     /*Maximal brightness*/
 #endif
 
 /*Line (dependencies: -*/
-#define LV_USE_LINE     1
+#define LV_USE_LINE     0
 
 /*List (dependencies: lv_page, lv_btn, lv_label, (lv_img optionally for icons ))*/
-#define LV_USE_LIST     1
+#define LV_USE_LIST     o
 #if LV_USE_LIST != 0
 /*Default animation time of focusing to a list element [ms] (0: no animation)  */
 #  define LV_LIST_DEF_ANIM_TIME  100
 #endif
 
 /*Line meter (dependencies: *;)*/
-#define LV_USE_LINEMETER   1
+#define LV_USE_LINEMETER   0
 #if LV_USE_LINEMETER
 /* Draw line more precisely at cost of performance.
  * Useful if there are lot of lines any minor are visible
@@ -615,20 +627,20 @@ typedef void * lv_obj_user_data_t;
 #endif
 
 /*Mask (dependencies: -)*/
-#define LV_USE_OBJMASK  1
+#define LV_USE_OBJMASK  0
 
 /*Message box (dependencies: lv_rect, lv_btnm, lv_label)*/
-#define LV_USE_MSGBOX     1
+#define LV_USE_MSGBOX     0
 
 /*Page (dependencies: lv_cont)*/
-#define LV_USE_PAGE     1
+#define LV_USE_PAGE     0
 #if LV_USE_PAGE != 0
 /*Focus default animation time [ms] (0: no animation)*/
 #  define LV_PAGE_DEF_ANIM_TIME     400
 #endif
 
 /*Preload (dependencies: lv_arc, lv_anim)*/
-#define LV_USE_SPINNER      1
+#define LV_USE_SPINNER      0
 #if LV_USE_SPINNER != 0
 #  define LV_SPINNER_DEF_ARC_LENGTH   60      /*[deg]*/
 #  define LV_SPINNER_DEF_SPIN_TIME    1000    /*[ms]*/
@@ -636,7 +648,7 @@ typedef void * lv_obj_user_data_t;
 #endif
 
 /*Roller (dependencies: lv_ddlist)*/
-#define LV_USE_ROLLER    1
+#define LV_USE_ROLLER    0
 #if LV_USE_ROLLER != 0
 /*Focus animation time [ms] (0: no animation)*/
 #  define LV_ROLLER_DEF_ANIM_TIME     200
@@ -646,43 +658,43 @@ typedef void * lv_obj_user_data_t;
 #endif
 
 /*Slider (dependencies: lv_bar)*/
-#define LV_USE_SLIDER    1
+#define LV_USE_SLIDER    0
 
 /*Spinbox (dependencies: lv_ta)*/
-#define LV_USE_SPINBOX       1
+#define LV_USE_SPINBOX       0
 
 /*Switch (dependencies: lv_slider)*/
-#define LV_USE_SWITCH       1
+#define LV_USE_SWITCH       0
 
 /*Text area (dependencies: lv_label, lv_page)*/
-#define LV_USE_TEXTAREA       1
+#define LV_USE_TEXTAREA       0
 #if LV_USE_TEXTAREA != 0
 #  define LV_TEXTAREA_DEF_CURSOR_BLINK_TIME 400     /*ms*/
 #  define LV_TEXTAREA_DEF_PWD_SHOW_TIME     1500    /*ms*/
 #endif
 
 /*Table (dependencies: lv_label)*/
-#define LV_USE_TABLE    1
+#define LV_USE_TABLE    0
 #if LV_USE_TABLE
 #  define LV_TABLE_COL_MAX    12
 #endif
 
 /*Tab (dependencies: lv_page, lv_btnm)*/
-#define LV_USE_TABVIEW      1
+#define LV_USE_TABVIEW      0
 #  if LV_USE_TABVIEW != 0
 /*Time of slide animation [ms] (0: no animation)*/
 #  define LV_TABVIEW_DEF_ANIM_TIME    300
 #endif
 
 /*Tileview (dependencies: lv_page) */
-#define LV_USE_TILEVIEW     1
+#define LV_USE_TILEVIEW     0
 #if LV_USE_TILEVIEW
 /*Time of slide animation [ms] (0: no animation)*/
 #  define LV_TILEVIEW_DEF_ANIM_TIME   300
 #endif
 
 /*Window (dependencies: lv_cont, lv_btn, lv_label, lv_img, lv_page)*/
-#define LV_USE_WIN      1
+#define LV_USE_WIN      0
 
 /*==================
  * Non-user section
