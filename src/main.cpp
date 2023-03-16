@@ -4,13 +4,14 @@
 #include <XPT2046_Touchscreen.h>
 #include <FlexCAN.h>
 #include <kinetis_flexcan.h>
+// #include <ui/ui_helpers.h>
 
 FlexCAN CANReceiver(100000);
 CAN_message_t msg;
 
 /*Change to your screen resolution*/
-static const uint16_t screenWidth = 320;
-static const uint16_t screenHeight = 240;
+static const uint16_t screenWidth = 240;
+static const uint16_t screenHeight = 320;
 
 #define TFT_BL 13
 uint8_t TftBackground = 150;
@@ -20,10 +21,10 @@ static lv_color_t buf[screenWidth * 10];
 
 /* I added this varies */
 
-uint16_t rawPointMinX = 168;
-uint16_t rawPointMaxX = 3700;
-uint16_t rawPointMinY = 378;
-uint16_t rawPointMaxY = 3700;
+uint16_t rawPointMinX = 200;
+uint16_t rawPointMaxX = 3400;
+uint16_t rawPointMinY = 800;
+uint16_t rawPointMaxY = 4095;
 uint16_t screenPointX;
 uint16_t screenPointY;
 lv_obj_t *labelPoint;
@@ -67,7 +68,6 @@ void event_handler(lv_event_t *e)
     LV_LOG_USER("Selected month: %s\n", buf);
   }
 }
-
 /* Display flushing */
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
 {
@@ -85,7 +85,7 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 void touch_xpt2046_init(void)
 {
   ts.begin();
-  ts.setRotation(3);
+  ts.setRotation(0);
 }
 void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 {
@@ -97,16 +97,13 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
     screenPointX = screenWidth * (p.x - rawPointMinX) / (rawPointMaxX - rawPointMinX);
     screenPointY = screenHeight * (p.y - rawPointMinY) / (rawPointMaxY - rawPointMinY);
 
+    screenPointX = screenWidth - screenWidth * (p.x - rawPointMinX) / (rawPointMaxX - rawPointMinX);
+    screenPointY = screenHeight - screenHeight * (p.y - rawPointMinY) / (rawPointMaxY - rawPointMinY);
+
+    screenPointX = screenPointX;
+    screenPointY = screenPointY;
     data->point.x = screenPointX;
     data->point.y = screenPointY;
-    data->point.x = p.x;
-    data->point.y = p.y;
-
-    Serial.print("touch x ");
-    Serial.print(p.x);
-
-    Serial.print(", touch y ");
-    Serial.println(p.y);
   }
   else
   {
@@ -139,7 +136,7 @@ void setup()
 #endif
 
   tft.begin();        /* TFT init */
-  tft.setRotation(1); /* Landscape orientation, flipped */
+  tft.setRotation(0); /* Landscape orientation, flipped */
 
   touch_xpt2046_init();
 
@@ -185,6 +182,17 @@ void setup()
 
   labelSpeed = lv_label_create(lv_scr_act());
   lv_obj_align(labelSpeed, LV_ALIGN_CENTER, 0, 80);
+
+  roller1 = lv_roller_create(lv_scr_act());
+  lv_roller_set_options(roller1,
+                        "Welcome\n"
+                        "My\n"
+                        "Program",
+                        LV_ROLLER_MODE_INFINITE);
+  lv_roller_set_visible_row_count(roller1, 4);
+  lv_obj_center(roller1);
+  lv_obj_add_event_cb(roller1, event_handler, LV_EVENT_ALL, NULL);
+  lv_obj_align(roller1, LV_ALIGN_CENTER, 0, -80);
 
   Serial.println("Setup done");
 }
@@ -237,5 +245,5 @@ void loop()
   }
   lv_label_set_text_fmt(labelPoint, "Point: %d, %d", screenPointX, screenPointY);
   lv_timer_handler(); /* let the GUI do its work */
-  delay(10);
+  delay(1);
 }
