@@ -4,6 +4,7 @@
 #include <XPT2046_Touchscreen.h>
 #include <FlexCAN.h>
 #include <kinetis_flexcan.h>
+#include <ui.h>
 
 FlexCAN CANReceiver(100000);
 CAN_message_t message;
@@ -159,7 +160,8 @@ void setup()
   disp_drv.draw_buf = &draw_buf;
   lv_disp_drv_register(&disp_drv);
 
-  
+  ui_init();
+  /*
   ui_labelAirTemp = lv_label_create(lv_scr_act());
   lv_obj_set_width(ui_labelAirTemp, LV_SIZE_CONTENT);   /// 1
   lv_obj_set_height(ui_labelAirTemp, LV_SIZE_CONTENT);    /// 1
@@ -218,12 +220,6 @@ void setup()
   lv_obj_set_align(ui_labelVolt, LV_ALIGN_CENTER);
   lv_label_set_text(ui_labelVolt, "240V");
 
-  // Initialize the input device driver
-  //  static lv_indev_drv_t indev_drv;
-  lv_indev_drv_init(&indev_drv);
-  indev_drv.type = LV_INDEV_TYPE_POINTER;
-  indev_drv.read_cb = my_touchpad_read;
-  lv_indev_drv_register(&indev_drv);
 
   ui_panelRtd = lv_obj_create(lv_scr_act());
   lv_obj_set_width(ui_panelRtd, 30);
@@ -320,7 +316,14 @@ void setup()
   lv_obj_set_y(ui_Label6, 105);
   lv_obj_set_align(ui_Label6, LV_ALIGN_CENTER);
   lv_label_set_text(ui_Label6, "RGB");
+*/
 
+ // Initialize the input device driver
+  //  static lv_indev_drv_t indev_drv;
+  lv_indev_drv_init(&indev_drv);
+  indev_drv.type = LV_INDEV_TYPE_POINTER;
+  indev_drv.read_cb = my_touchpad_read;
+  lv_indev_drv_register(&indev_drv);
   // add a cursor
   mouse_indev = lv_indev_drv_register(&indev_drv);
   // LV_IMG_DECLARE(mouse_cursor_icon);                  //Declare the image source.
@@ -427,7 +430,7 @@ void loop()
     }
   }
   lv_timer_handler(); /* let the GUI do its work */
-  delay(10);
+  delay(0.01);
 }
 
  /*
