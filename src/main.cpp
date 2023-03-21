@@ -13,6 +13,8 @@ CAN_message_t message;
 static const uint16_t screenWidth = 240;
 static const uint16_t screenHeight = 320;
 
+#define UPDATE_RATE 100
+
 #define TFT_BL 13
 uint8_t TftBackground = 150;
 
@@ -161,162 +163,6 @@ void setup()
   lv_disp_drv_register(&disp_drv);
 
   ui_init();
-  /*
-  ui_labelAirTemp = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_labelAirTemp, LV_SIZE_CONTENT);   /// 1
-  lv_obj_set_height(ui_labelAirTemp, LV_SIZE_CONTENT);    /// 1
-  lv_obj_set_x(ui_labelAirTemp, -30);
-  lv_obj_set_y(ui_labelAirTemp, -122);
-  lv_obj_set_align(ui_labelAirTemp, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_labelAirTemp, "Airtemp: 0°C");
-
-  ui_labelMotorTemp = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_labelMotorTemp, LV_SIZE_CONTENT);   /// 1
-  lv_obj_set_height(ui_labelMotorTemp, LV_SIZE_CONTENT);    /// 1
-  lv_obj_set_x(ui_labelMotorTemp, -30);
-  lv_obj_set_y(ui_labelMotorTemp, -100);
-  lv_obj_set_align(ui_labelMotorTemp, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_labelMotorTemp, "Motortemp 0°C");
-
-  ui_barVoltage = lv_bar_create(lv_scr_act());
-  lv_bar_set_range(ui_barVoltage, 240, 403);
-  lv_bar_set_value(ui_barVoltage, 240, LV_ANIM_OFF);
-  lv_obj_set_width(ui_barVoltage, 200);
-  lv_obj_set_height(ui_barVoltage, 30);
-  lv_obj_set_x(ui_barVoltage, 0);
-  lv_obj_set_y(ui_barVoltage, 75);
-  lv_obj_set_align(ui_barVoltage, LV_ALIGN_CENTER);
-
-  ui_barCurrent = lv_bar_create(lv_scr_act());
-  lv_bar_set_range(ui_barCurrent, 0, 100);
-  lv_bar_set_value(ui_barCurrent, 0, LV_ANIM_OFF);
-  lv_obj_set_width(ui_barCurrent, 200);
-  lv_obj_set_height(ui_barCurrent, 30);
-  lv_obj_set_x(ui_barCurrent, 0);
-  lv_obj_set_y(ui_barCurrent, 30);
-  lv_obj_set_align(ui_barCurrent, LV_ALIGN_CENTER);
-
-  ui_labelSpeed = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_labelSpeed, LV_SIZE_CONTENT);  /// 1
-  lv_obj_set_height(ui_labelSpeed, LV_SIZE_CONTENT); /// 1
-  lv_obj_set_x(ui_labelSpeed, 5);
-  lv_obj_set_y(ui_labelSpeed, -40);
-  lv_obj_set_align(ui_labelSpeed, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_labelSpeed, "100 km/h");
-
-  ui_labelCurrent = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_labelCurrent, LV_SIZE_CONTENT);   /// 1
-  lv_obj_set_height(ui_labelCurrent, LV_SIZE_CONTENT);    /// 1
-  lv_obj_set_x(ui_labelCurrent, 3);
-  lv_obj_set_y(ui_labelCurrent, 30);
-  lv_obj_set_align(ui_labelCurrent, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_labelCurrent, "0A");
-
-  ui_labelVolt = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_labelVolt, LV_SIZE_CONTENT);  /// 1
-  lv_obj_set_height(ui_labelVolt, LV_SIZE_CONTENT); /// 1
-  lv_obj_set_x(ui_labelVolt, 0);
-  lv_obj_set_y(ui_labelVolt, 75);
-  lv_obj_set_align(ui_labelVolt, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_labelVolt, "240V");
-
-
-  ui_panelRtd = lv_obj_create(lv_scr_act());
-  lv_obj_set_width(ui_panelRtd, 30);
-  lv_obj_set_height(ui_panelRtd, 30);
-  lv_obj_set_x(ui_panelRtd, -90);
-  lv_obj_set_y(ui_panelRtd, 130);
-  lv_obj_set_align(ui_panelRtd, LV_ALIGN_CENTER);
-  lv_obj_clear_flag(ui_panelRtd, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-
-  ui_panelCi = lv_obj_create(lv_scr_act());
-  lv_obj_set_width(ui_panelCi, 30);
-  lv_obj_set_height(ui_panelCi, 30);
-  lv_obj_set_x(ui_panelCi, -55);
-  lv_obj_set_y(ui_panelCi, 130);
-  lv_obj_set_align(ui_panelCi, LV_ALIGN_CENTER);
-  lv_obj_clear_flag(ui_panelCi, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-
-  ui_panelCal = lv_obj_create(lv_scr_act());
-  lv_obj_set_width(ui_panelCal, 30);
-  lv_obj_set_height(ui_panelCal, 30);
-  lv_obj_set_x(ui_panelCal, -20);
-  lv_obj_set_y(ui_panelCal, 130);
-  lv_obj_set_align(ui_panelCal, LV_ALIGN_CENTER);
-  lv_obj_clear_flag(ui_panelCal, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-
-  ui_panelBms = lv_obj_create(lv_scr_act());
-  lv_obj_set_width(ui_panelBms, 30);
-  lv_obj_set_height(ui_panelBms, 30);
-  lv_obj_set_x(ui_panelBms, 20);
-  lv_obj_set_y(ui_panelBms, 130);
-  lv_obj_set_align(ui_panelBms, LV_ALIGN_CENTER);
-  lv_obj_clear_flag(ui_panelBms, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-
-  ui_panelImd = lv_obj_create(lv_scr_act());
-  lv_obj_set_width(ui_panelImd, 30);
-  lv_obj_set_height(ui_panelImd, 30);
-  lv_obj_set_x(ui_panelImd, 55);
-  lv_obj_set_y(ui_panelImd, 130);
-  lv_obj_set_align(ui_panelImd, LV_ALIGN_CENTER);
-  lv_obj_clear_flag(ui_panelImd, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-
-  ui_panelRgb = lv_obj_create(lv_scr_act());
-  lv_obj_set_width(ui_panelRgb, 30);
-  lv_obj_set_height(ui_panelRgb, 30);
-  lv_obj_set_x(ui_panelRgb, 90);
-  lv_obj_set_y(ui_panelRgb, 130);
-  lv_obj_set_align(ui_panelRgb, LV_ALIGN_CENTER);
-  lv_obj_clear_flag(ui_panelRgb, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-
-  ui_Label2 = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_Label2, LV_SIZE_CONTENT);  /// 1
-  lv_obj_set_height(ui_Label2, LV_SIZE_CONTENT); /// 1
-  lv_obj_set_x(ui_Label2, -90);
-  lv_obj_set_y(ui_Label2, 105);
-  lv_obj_set_align(ui_Label2, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_Label2, "RTD");
-
-  ui_Label1 = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_Label1, LV_SIZE_CONTENT);  /// 1
-  lv_obj_set_height(ui_Label1, LV_SIZE_CONTENT); /// 1
-  lv_obj_set_x(ui_Label1, -55);
-  lv_obj_set_y(ui_Label1, 105);
-  lv_obj_set_align(ui_Label1, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_Label1, "CI");
-
-  ui_Label3 = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_Label3, LV_SIZE_CONTENT);  /// 1
-  lv_obj_set_height(ui_Label3, LV_SIZE_CONTENT); /// 1
-  lv_obj_set_x(ui_Label3, -20);
-  lv_obj_set_y(ui_Label3, 105);
-  lv_obj_set_align(ui_Label3, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_Label3, "CAL");
-
-  ui_Label4 = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_Label4, LV_SIZE_CONTENT);  /// 1
-  lv_obj_set_height(ui_Label4, LV_SIZE_CONTENT); /// 1
-  lv_obj_set_x(ui_Label4, 20);
-  lv_obj_set_y(ui_Label4, 105);
-  lv_obj_set_align(ui_Label4, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_Label4, "BMS");
-
-  ui_Label5 = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_Label5, LV_SIZE_CONTENT);  /// 1
-  lv_obj_set_height(ui_Label5, LV_SIZE_CONTENT); /// 1
-  lv_obj_set_x(ui_Label5, 55);
-  lv_obj_set_y(ui_Label5, 105);
-  lv_obj_set_align(ui_Label5, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_Label5, "IMD");
-
-  ui_Label6 = lv_label_create(lv_scr_act());
-  lv_obj_set_width(ui_Label6, LV_SIZE_CONTENT);  /// 1
-  lv_obj_set_height(ui_Label6, LV_SIZE_CONTENT); /// 1
-  lv_obj_set_x(ui_Label6, 90);
-  lv_obj_set_y(ui_Label6, 105);
-  lv_obj_set_align(ui_Label6, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_Label6, "RGB");
-*/
 
  // Initialize the input device driver
   //  static lv_indev_drv_t indev_drv;
@@ -324,13 +170,13 @@ void setup()
   indev_drv.type = LV_INDEV_TYPE_POINTER;
   indev_drv.read_cb = my_touchpad_read;
   lv_indev_drv_register(&indev_drv);
-  // add a cursor
+  /*// add a cursor
   mouse_indev = lv_indev_drv_register(&indev_drv);
   // LV_IMG_DECLARE(mouse_cursor_icon);                  //Declare the image source.
   cursor_obj = lv_img_create(lv_scr_act());     // Create an image object for the cursor
   lv_img_set_src(cursor_obj, LV_SYMBOL_GPS);    // Set the image source
   lv_indev_set_cursor(mouse_indev, cursor_obj); // Connect the image  object to the driver
-
+*/
   Serial.println("Setup done");
 }
 
@@ -354,66 +200,90 @@ void loop()
         
         switch (canMsg.shutdown){
         case 1:
-          lv_label_set_text(ui_labelSpeed, "Shutdown open pre BSPD");
+          lv_label_set_text(ui_labelSpeed, "before BSPD open");
           break;
         case 2:
-          lv_label_set_text(ui_labelSpeed, "Shutdown open after BSPD");
+          lv_label_set_text(ui_labelSpeed, "BSPD open");
           break;
         case 3:
-          lv_label_set_text(ui_labelSpeed, "Shutdown open at TS ON");
+          lv_label_set_text(ui_labelSpeed, "TS ON open");
           break;
         case 4:
-          lv_label_set_text(ui_labelSpeed, "Shutdown open at BOTS");
+          lv_label_set_text(ui_labelSpeed, "BOTS open");
           break;
         case 5:
-          lv_label_set_text(ui_labelSpeed, "Shutdown open at Error Storage");
+          lv_label_set_text(ui_labelSpeed, "Error Storage");
           break;
         case 6:
-          lv_label_set_text(ui_labelSpeed, "Shutdown open at TSMS");
+          lv_label_set_text(ui_labelSpeed, "TSMS open");
           break;
         default:
-          lv_label_set_text_fmt(ui_labelSpeed, "%.2f km/h", canMsg.speed);
           break;
         }
 
-        
         Serial.print(canMsg.shutdown);
         Serial.print("\t");
+
+        lv_label_set_text_fmt(ui_lSpeed, "%.2fkm/h", canMsg.speed);
         Serial.print(canMsg.speed);
         Serial.print("\t");
-        lv_label_set_text_fmt(ui_labelCurrent, "%.2f A", canMsg.current);
-        lv_bar_set_value(ui_barCurrent, canMsg.current, LV_ANIM_OFF);
+
+        lv_label_set_text_fmt(ui_lCurrent, "%.2fA", canMsg.current);
+        lv_bar_set_value(ui_bCurrent, canMsg.current, LV_ANIM_OFF);
         Serial.print(canMsg.current);
         Serial.print("\n");
 
       } else if (message.buf[1] == 1) {
+
         canMsg.motorTemp = ((uint16_t)message.buf[2] << 8 | message.buf[3]) / 100.0;
         canMsg.airTemp = ((uint16_t)message.buf[4] << 8 | message.buf[5]) / 100.0;
         canMsg.dcVoltage = ((uint16_t)message.buf[6] << 8 | message.buf[7]) / 100.0;
 
-        lv_label_set_text_fmt(ui_labelMotorTemp, "Motortemp: %.2f °C", canMsg.motorTemp);
+        lv_label_set_text_fmt(ui_labelMotorTemp, "%.2f°C", canMsg.motorTemp);
+        lv_bar_set_value(ui_bMotorTemperature, canMsg.motorTemp, LV_ANIM_OFF);
         Serial.print(canMsg.motorTemp);
         Serial.print("\t");
-        lv_label_set_text_fmt(ui_labelAirTemp, "Airtemp: %.2f °C", canMsg.airTemp);
+
+        lv_label_set_text_fmt(ui_labelAirTemp, "%.2f°C", canMsg.airTemp);
+        lv_bar_set_value(ui_bAirTemperature, canMsg.motorTemp, LV_ANIM_OFF);
         Serial.print(canMsg.airTemp);
         Serial.print("\t");
-        lv_label_set_text_fmt(ui_labelVolt, "%.2f V", canMsg.dcVoltage);
-        lv_bar_set_value(ui_barVoltage, canMsg.dcVoltage, LV_ANIM_OFF);
+
+        lv_label_set_text_fmt(ui_lBatteryVoltage, "%.2f V", canMsg.dcVoltage);
+        lv_bar_set_value(ui_bBatteryVoltage, canMsg.dcVoltage, LV_ANIM_OFF);
         Serial.print(canMsg.dcVoltage);
         Serial.print("\n");
 
       } else if (message.buf[1] == 2) {
         canMsg.power = ((uint32_t)message.buf[2] << 24) | (message.buf[3] << 16) | (message.buf[4] << 8) | message.buf[5];
+        canMsg.powermode = message.buf[6];
+        
         Serial.print(canMsg.power);
         Serial.print("\n");
 
-        canMsg.powermode = message.buf[6];
+        switch (canMsg.powermode){
+        case 1:
+          lv_label_set_text(ui_lPowermode, "Fast");
+          break;
+        case 2:
+          lv_label_set_text(ui_lPowermode, "Faast");
+          break;
+        case 3:
+          lv_label_set_text(ui_lPowermode, "Faaast");
+          break;
+        default:
+          lv_label_set_text(ui_lPowermode, "Normal");
+          break;
+        }
+
         Serial.print(canMsg.powermode);
         Serial.print("\n");
 
       }else if(message.buf[0]==32){
         uint16_t newValue16 = message.buf[1] | (message.buf[2] << 8);
         canMsg.brakePedalValue = (float)newValue16 / 65535.0;
+
+        lv_bar_set_value(ui_bBrakePedal, canMsg.brakePedalValue*1000, LV_ANIM_OFF);
         Serial.print(canMsg.brakePedalValue);
         Serial.print("\n");
       }else if(message.buf[0]==33){
@@ -421,6 +291,8 @@ void loop()
         // change line below when type of pedal_value_t changes
         uint16_t newValue16 = message.buf[1] | (message.buf[2] << 8);
         canMsg.gasPedalValue = (float)newValue16 / 65535.0;
+
+        lv_bar_set_value(ui_bGasPedal, canMsg.gasPedalValue*1000, LV_ANIM_OFF);
         Serial.print(canMsg.gasPedalValue);
         Serial.print("\n");
       } else {
@@ -430,79 +302,5 @@ void loop()
     }
   }
   lv_timer_handler(); /* let the GUI do its work */
-  delay(0.01);
+  delay(1/UPDATE_RATE);
 }
-
- /*
-    if (msg.buf[0] == 16)
-    {
-      if (msg.buf[1] == 0)
-      {
-        Serial.print("Status ");
-        Serial.println(msg.buf[2]);
-
-        Serial.print("State ");
-        Serial.println(msg.buf[3]);
-
-        uint16_t speed16 = ((uint16_t)msg.buf[4] << 8) | (uint16_t)msg.buf[5];
-        float speed = (float)speed16 / 100.0;
-
-        uint16_t current16 = ((uint16_t)msg.buf[6] << 8) | (uint16_t)msg.buf[7];
-        float current = (float)current16 / 100.0;
-        lv_label_set_text_fmt(ui_labelCurrent, "%.2f A", current);
-        lv_bar_set_value(ui_barCurrent, (current16 / 100), LV_ANIM_OFF);
-      }
-      else if (msg.buf[1] == 1)
-      {
-        Serial.print("MotorTemp ");
-        Serial.println(msg.buf[2]);
-        lv_label_set_text_fmt(ui_labelMotorTemp, "MotorTemp: %d°C", msg.buf[2]);
-
-
-        Serial.print("AirTemp ");
-        Serial.println(msg.buf[3]);
-        lv_label_set_text_fmt(ui_labelAirTemp, "Airtemp: %d°C", msg.buf[3]);
-
-
-        uint16_t dcVoltage16 = ((uint16_t)msg.buf[4] << 8) | (uint16_t)msg.buf[5];
-        float dcVoltage = (float)dcVoltage16 / 100.0;
-        lv_label_set_text_fmt(ui_labelVolt, "%.2f V", dcVoltage);
-        lv_bar_set_value(ui_barVoltage, (dcVoltage16 / 100), LV_ANIM_OFF);
-      }
-    }else if(msg.buf[0]==208){
-      if(msg.buf[1]==0){
-        lv_obj_set_style_bg_color(ui_panelBms, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-      }else{
-        lv_obj_set_style_bg_color(ui_panelBms, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-      }
-      Serial.print("BMS: 208 ");
-      Serial.println(msg.buf[1]);
-    }else if(msg.buf[0]==209){
-      if(msg.buf[1]==0){
-        lv_obj_set_style_bg_color(ui_panelImd, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-      }else{
-        lv_obj_set_style_bg_color(ui_panelImd, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-      }
-      Serial.print("IMD: 209 ");
-      Serial.println(msg.buf[1]);
-    }else if(msg.buf[0]==116){
-      if(((msg.buf[1] >> 7) & 0x1)==0){
-        lv_obj_set_style_bg_color(ui_panelRtd, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-      }else{
-        lv_obj_set_style_bg_color(ui_panelRtd, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-      }
-    }else if(msg.buf[0]==115){
-      if(((msg.buf[1] >> 7) & 0x1)==0){
-        lv_obj_set_style_bg_color(ui_panelCal, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-      }else{
-        lv_obj_set_style_bg_color(ui_panelCal, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-      }
-    }else if(msg.buf[0]==120){
-      if(((msg.buf[1] >> 7) & 0x1)==0){
-        lv_obj_set_style_bg_color(ui_panelRgb, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-      }else{
-        lv_obj_set_style_bg_color(ui_panelRgb, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-      }
-    }
-  
-  */

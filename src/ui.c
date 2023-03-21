@@ -169,7 +169,7 @@ void ui_Screen1_screen_init(void)
 
     ui_pnextPage1 = lv_obj_create(ui_Screen1);
     lv_obj_set_width(ui_pnextPage1, 80);
-    lv_obj_set_height(ui_pnextPage1, 30);
+    lv_obj_set_height(ui_pnextPage1, 50);
     lv_obj_set_x(ui_pnextPage1, 50);
     lv_obj_set_y(ui_pnextPage1, 100);
     lv_obj_set_align(ui_pnextPage1, LV_ALIGN_CENTER);
@@ -288,7 +288,8 @@ void ui_Screen2_screen_init(void)
     lv_label_set_text(ui_lPowermode, "Fast");
 
     ui_bBrakePedal = lv_bar_create(ui_Screen2);
-    lv_bar_set_value(ui_bBrakePedal, 25, LV_ANIM_OFF);
+    lv_bar_set_range(ui_bBrakePedal, 0, 1000);
+    lv_bar_set_value(ui_bBrakePedal, 500, LV_ANIM_OFF);
     lv_obj_set_width(ui_bBrakePedal, 30);
     lv_obj_set_height(ui_bBrakePedal, 80);
     lv_obj_set_x(ui_bBrakePedal, -70);
@@ -305,7 +306,8 @@ void ui_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui_bBrakePedal, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
     ui_bGasPedal = lv_bar_create(ui_Screen2);
-    lv_bar_set_value(ui_bGasPedal, 25, LV_ANIM_OFF);
+    lv_bar_set_range(ui_bGasPedal, 0, 1000);
+    lv_bar_set_value(ui_bGasPedal, 500, LV_ANIM_OFF);
     lv_obj_set_width(ui_bGasPedal, 30);
     lv_obj_set_height(ui_bGasPedal, 80);
     lv_obj_set_x(ui_bGasPedal, -30);
@@ -325,7 +327,7 @@ void ui_Screen2_screen_init(void)
     lv_obj_set_width(ui_lSpeed, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_lSpeed, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_lSpeed, 50);
-    lv_obj_set_y(ui_lSpeed, 55);
+    lv_obj_set_y(ui_lSpeed, 50);
     lv_obj_set_align(ui_lSpeed, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lSpeed, "100 km/h");
     lv_obj_set_style_outline_color(ui_lSpeed, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -335,7 +337,7 @@ void ui_Screen2_screen_init(void)
 
     ui_pnextPage = lv_obj_create(ui_Screen2);
     lv_obj_set_width(ui_pnextPage, 80);
-    lv_obj_set_height(ui_pnextPage, 30);
+    lv_obj_set_height(ui_pnextPage, 50);
     lv_obj_set_x(ui_pnextPage, 50);
     lv_obj_set_y(ui_pnextPage, 100);
     lv_obj_set_align(ui_pnextPage, LV_ALIGN_CENTER);
