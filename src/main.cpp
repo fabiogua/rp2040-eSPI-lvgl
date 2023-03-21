@@ -4,8 +4,9 @@
 #include <XPT2046_Touchscreen.h>
 #include <FlexCAN.h>
 #include <kinetis_flexcan.h>
+
 FlexCAN CANReceiver(100000);
-CAN_message_t msg;
+CAN_message_t message;
 
 /*Change to your screen resolution*/
 static const uint16_t screenWidth = 240;
@@ -55,6 +56,19 @@ TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 #define TIRQ_PIN 2
 
 XPT2046_Touchscreen ts(CS_PIN, TIRQ_PIN); // Param 2 - Touch IRQ Pin - interrupt enabled polling
+
+// Define the message structure
+struct CanMessage {
+  uint8_t msgId;
+  uint8_t status;
+  uint8_t shutdown;
+  float speed;
+  float current;
+  float motorTemp;
+  float airTemp;
+  float dcVoltage;
+  uint32_t power;
+};
 
 #if LV_USE_LOG != 0
 /* Serial debugging */
@@ -317,8 +331,86 @@ void setup()
 
 void loop()
 {
-  while (CANReceiver.read(msg))
-  {
+  if (CANReceiver.available()) {
+    // Read the message
+    CAN_message_t message;
+    CANReceiver.read(message);
+    if(message.buf[0]==192){
+      // Decode the message
+      CanMessage canMsg;
+      if (message.buf[1] == 0) {
+        canMsg.status = message.buf[2];
+        canMsg.shutdown = message.buf[3];
+        canMsg.speed = ((uint16_t)message.buf[4] << 8 | message.buf[5]) / 100.0;
+        canMsg.current = ((uint16_t)message.buf[6] << 8 | message.buf[7]) / 100.0;
+
+        Serial.print(canMsg.status);
+        Serial.print("\t");
+        
+        
+        switch (canMsg.shutdown)
+        {
+        case 1:
+          lv_label_set_text(ui_labelSpeed, "Shutdown open pre BSPD");
+          break;
+        case 2:
+          lv_label_set_text(ui_labelSpeed, "Shutdown open after BSPD");
+          break;
+        case 3:
+          lv_label_set_text(ui_labelSpeed, "Shutdown open at TS ON");
+          break;
+        case 4:
+          lv_label_set_text(ui_labelSpeed, "Shutdown open at BOTS");
+          break;
+        case 5:
+          lv_label_set_text(ui_labelSpeed, "Shutdown open at Error Storage");
+          break;
+        case 6:
+          lv_label_set_text(ui_labelSpeed, "Shutdown open at TSMS");
+          break;
+        default:
+          lv_label_set_text_fmt(ui_labelSpeed, "%.2f km/h", canMsg.speed);
+          break;
+        }
+
+        
+        Serial.print(canMsg.shutdown);
+        Serial.print("\t");
+        Serial.print(canMsg.speed);
+        Serial.print("\t");
+        lv_label_set_text_fmt(ui_labelCurrent, "%.2f A", canMsg.current);
+        lv_bar_set_value(ui_barCurrent, canMsg.current, LV_ANIM_OFF);
+        Serial.print(canMsg.current);
+        Serial.print("\n");
+
+      } else if (message.buf[1] == 1) {
+        canMsg.motorTemp = ((uint16_t)message.buf[2] << 8 | message.buf[3]) / 100.0;
+        canMsg.airTemp = ((uint16_t)message.buf[4] << 8 | message.buf[5]) / 100.0;
+        canMsg.dcVoltage = ((uint16_t)message.buf[6] << 8 | message.buf[7]) / 100.0;
+
+        lv_label_set_text_fmt(ui_labelMotorTemp, "Motortemp: %.2f °C", canMsg.motorTemp);
+        Serial.print(canMsg.motorTemp);
+        Serial.print("\t");
+        lv_label_set_text_fmt(ui_labelAirTemp, "Airtemp: %.2f °C", canMsg.airTemp);
+        Serial.print(canMsg.airTemp);
+        Serial.print("\t");
+        lv_label_set_text_fmt(ui_labelVolt, "%.2f V", canMsg.dcVoltage);
+        lv_bar_set_value(ui_barVoltage, canMsg.dcVoltage, LV_ANIM_OFF);
+        Serial.print(canMsg.dcVoltage);
+        Serial.print("\n");
+
+      } else if (message.buf[1] == 2) {
+        canMsg.power = ((uint32_t)message.buf[2] << 24) | (message.buf[3] << 16) | (message.buf[4] << 8) | message.buf[5];
+        Serial.print(canMsg.power);
+        Serial.print("\n");
+
+      } else {
+        Serial.println("Unknown message ID");
+        return;
+      }
+    }
+    
+    /*
     if (msg.buf[0] == 16)
     {
       if (msg.buf[1] == 0)
@@ -331,7 +423,6 @@ void loop()
 
         uint16_t speed16 = ((uint16_t)msg.buf[4] << 8) | (uint16_t)msg.buf[5];
         float speed = (float)speed16 / 100.0;
-        lv_label_set_text_fmt(ui_labelSpeed, "%.2f km/h", speed);
 
         uint16_t current16 = ((uint16_t)msg.buf[6] << 8) | (uint16_t)msg.buf[7];
         float current = (float)current16 / 100.0;
@@ -390,7 +481,11 @@ void loop()
         lv_obj_set_style_bg_color(ui_panelRgb, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
       }
     }
+  */
   }
+
+
+
   lv_timer_handler(); /* let the GUI do its work */
   delay(10);
 }
