@@ -59,7 +59,6 @@ XPT2046_Touchscreen ts(CS_PIN, TIRQ_PIN); // Param 2 - Touch IRQ Pin - interrupt
 
 // Define the message structure
 struct CanMessage {
-  uint8_t msgId;
   uint8_t status;
   uint8_t shutdown;
   float speed;
@@ -68,6 +67,9 @@ struct CanMessage {
   float airTemp;
   float dcVoltage;
   uint32_t power;
+  uint8_t powermode;
+  float brakePedalValue;
+  float gasPedalValue;
 };
 
 #if LV_USE_LOG != 0
@@ -347,9 +349,7 @@ void loop()
         Serial.print(canMsg.status);
         Serial.print("\t");
         
-        
-        switch (canMsg.shutdown)
-        {
+        switch (canMsg.shutdown){
         case 1:
           lv_label_set_text(ui_labelSpeed, "Shutdown open pre BSPD");
           break;
@@ -404,13 +404,33 @@ void loop()
         Serial.print(canMsg.power);
         Serial.print("\n");
 
+        canMsg.powermode = message.buf[6];
+        Serial.print(canMsg.powermode);
+        Serial.print("\n");
+
+      }else if(message.buf[0]==32){
+        uint16_t newValue16 = message.buf[1] | (message.buf[2] << 8);
+        canMsg.brakePedalValue = (float)newValue16 / 65535.0;
+        Serial.print(canMsg.brakePedalValue);
+        Serial.print("\n");
+      }else if(message.buf[0]==33){
+
+        // change line below when type of pedal_value_t changes
+        uint16_t newValue16 = message.buf[1] | (message.buf[2] << 8);
+        canMsg.gasPedalValue = (float)newValue16 / 65535.0;
+        Serial.print(canMsg.gasPedalValue);
+        Serial.print("\n");
       } else {
         Serial.println("Unknown message ID");
         return;
-      }
+      } 
     }
-    
-    /*
+  }
+  lv_timer_handler(); /* let the GUI do its work */
+  delay(10);
+}
+
+ /*
     if (msg.buf[0] == 16)
     {
       if (msg.buf[1] == 0)
@@ -481,11 +501,5 @@ void loop()
         lv_obj_set_style_bg_color(ui_panelRgb, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
       }
     }
+  
   */
-  }
-
-
-
-  lv_timer_handler(); /* let the GUI do its work */
-  delay(10);
-}
