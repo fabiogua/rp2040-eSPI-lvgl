@@ -16,7 +16,7 @@ static const uint16_t screenHeight = 320;
 #define UPDATE_RATE 100
 
 #define TFT_BL 13
-uint8_t TftBackground = 150;
+uint8_t TftBackground = 10;
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * 10];
@@ -33,25 +33,6 @@ lv_obj_t *labelPoint;
 lv_indev_t *mouse_indev;
 lv_obj_t *cursor_obj;
 lv_indev_drv_t indev_drv;
-lv_obj_t *ui_labelSpeed;
-lv_obj_t *ui_labelCurrent;
-lv_obj_t *ui_labelVolt;
-lv_obj_t *ui_labelAirTemp;
-lv_obj_t *ui_labelMotorTemp;
-lv_obj_t *ui_barVoltage;
-lv_obj_t *ui_barCurrent;
-lv_obj_t *ui_panelRtd;
-lv_obj_t *ui_panelCi;
-lv_obj_t *ui_panelCal;
-lv_obj_t *ui_panelBms;
-lv_obj_t *ui_panelImd;
-lv_obj_t *ui_panelRgb;
-lv_obj_t *ui_Label1;
-lv_obj_t *ui_Label2;
-lv_obj_t *ui_Label3;
-lv_obj_t *ui_Label4;
-lv_obj_t *ui_Label5;
-lv_obj_t *ui_Label6;
 
 TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
@@ -61,7 +42,8 @@ TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 XPT2046_Touchscreen ts(CS_PIN, TIRQ_PIN); // Param 2 - Touch IRQ Pin - interrupt enabled polling
 
 // Define the message structure
-struct CanMessage {
+struct CanMessage
+{
   uint8_t status;
   uint8_t shutdown;
   float speed;
@@ -164,15 +146,16 @@ void setup()
 
   ui_init();
 
- // Initialize the input device driver
+  // Initialize the input device driver
   //  static lv_indev_drv_t indev_drv;
   lv_indev_drv_init(&indev_drv);
   indev_drv.type = LV_INDEV_TYPE_POINTER;
   indev_drv.read_cb = my_touchpad_read;
   lv_indev_drv_register(&indev_drv);
-  /*// add a cursor
+  /*
+  // add a cursor
   mouse_indev = lv_indev_drv_register(&indev_drv);
-  // LV_IMG_DECLARE(mouse_cursor_icon);                  //Declare the image source.
+  lv_IMG_DECLARE(mouse_cursor_icon);                  //Declare the image source.
   cursor_obj = lv_img_create(lv_scr_act());     // Create an image object for the cursor
   lv_img_set_src(cursor_obj, LV_SYMBOL_GPS);    // Set the image source
   lv_indev_set_cursor(mouse_indev, cursor_obj); // Connect the image  object to the driver
@@ -182,14 +165,19 @@ void setup()
 
 void loop()
 {
-  if (CANReceiver.available()) {
+  while (CANReceiver.available())
+  {
     // Read the message
     CAN_message_t message;
     CANReceiver.read(message);
-    if(message.buf[0]==192){
+    CanMessage canMsg;
+
+    // Serial.println(message.buf[0]);
+    if (message.buf[0] == 192)
+    {
       // Decode the message
-      CanMessage canMsg;
-      if (message.buf[1] == 0) {
+      if (message.buf[1] == 0)
+      {
         canMsg.status = message.buf[2];
         canMsg.shutdown = message.buf[3];
         canMsg.speed = ((uint16_t)message.buf[4] << 8 | message.buf[5]) / 100.0;
@@ -197,25 +185,26 @@ void loop()
 
         Serial.print(canMsg.status);
         Serial.print("\t");
-        
-        switch (canMsg.shutdown){
+
+        switch (canMsg.shutdown)
+        {
         case 1:
-          lv_label_set_text(ui_labelSpeed, "before BSPD open");
+          lv_label_set_text(ui_lShutdown, "before BSPD open");
           break;
         case 2:
-          lv_label_set_text(ui_labelSpeed, "BSPD open");
+          lv_label_set_text(ui_lShutdown, "BSPD open");
           break;
         case 3:
-          lv_label_set_text(ui_labelSpeed, "TS ON open");
+          lv_label_set_text(ui_lShutdown, "TS ON open");
           break;
         case 4:
-          lv_label_set_text(ui_labelSpeed, "BOTS open");
+          lv_label_set_text(ui_lShutdown, "BOTS open");
           break;
         case 5:
-          lv_label_set_text(ui_labelSpeed, "Error Storage");
+          lv_label_set_text(ui_lShutdown, "Error Storage");
           break;
         case 6:
-          lv_label_set_text(ui_labelSpeed, "TSMS open");
+          lv_label_set_text(ui_lShutdown, "TSMS open");
           break;
         default:
           break;
@@ -232,19 +221,20 @@ void loop()
         lv_bar_set_value(ui_bCurrent, canMsg.current, LV_ANIM_OFF);
         Serial.print(canMsg.current);
         Serial.print("\n");
-
-      } else if (message.buf[1] == 1) {
+      }
+      else if (message.buf[1] == 1)
+      {
 
         canMsg.motorTemp = ((uint16_t)message.buf[2] << 8 | message.buf[3]) / 100.0;
         canMsg.airTemp = ((uint16_t)message.buf[4] << 8 | message.buf[5]) / 100.0;
         canMsg.dcVoltage = ((uint16_t)message.buf[6] << 8 | message.buf[7]) / 100.0;
 
-        lv_label_set_text_fmt(ui_labelMotorTemp, "%.2f°C", canMsg.motorTemp);
+        lv_label_set_text_fmt(ui_lMotorTemperature, "%.2f°C", canMsg.motorTemp);
         lv_bar_set_value(ui_bMotorTemperature, canMsg.motorTemp, LV_ANIM_OFF);
         Serial.print(canMsg.motorTemp);
         Serial.print("\t");
 
-        lv_label_set_text_fmt(ui_labelAirTemp, "%.2f°C", canMsg.airTemp);
+        lv_label_set_text_fmt(ui_lAirTemperature, "%.2f°C", canMsg.airTemp);
         lv_bar_set_value(ui_bAirTemperature, canMsg.motorTemp, LV_ANIM_OFF);
         Serial.print(canMsg.airTemp);
         Serial.print("\t");
@@ -253,23 +243,22 @@ void loop()
         lv_bar_set_value(ui_bBatteryVoltage, canMsg.dcVoltage, LV_ANIM_OFF);
         Serial.print(canMsg.dcVoltage);
         Serial.print("\n");
-
-      } else if (message.buf[1] == 2) {
+      }
+      else if (message.buf[1] == 2)
+      {
         canMsg.power = ((uint32_t)message.buf[2] << 24) | (message.buf[3] << 16) | (message.buf[4] << 8) | message.buf[5];
         canMsg.powermode = message.buf[6];
-        
+
         Serial.print(canMsg.power);
         Serial.print("\n");
 
-        switch (canMsg.powermode){
+        switch (canMsg.powermode)
+        {
         case 1:
           lv_label_set_text(ui_lPowermode, "Fast");
           break;
         case 2:
           lv_label_set_text(ui_lPowermode, "Faast");
-          break;
-        case 3:
-          lv_label_set_text(ui_lPowermode, "Faaast");
           break;
         default:
           lv_label_set_text(ui_lPowermode, "Normal");
@@ -278,29 +267,29 @@ void loop()
 
         Serial.print(canMsg.powermode);
         Serial.print("\n");
+      }
+    }
+    else if (message.buf[0] == 32)
+    {
+      uint16_t newValue16 = message.buf[1] | (message.buf[2] << 8);
+      canMsg.brakePedalValue = (float)newValue16 / 65535.0;
 
-      }else if(message.buf[0]==32){
-        uint16_t newValue16 = message.buf[1] | (message.buf[2] << 8);
-        canMsg.brakePedalValue = (float)newValue16 / 65535.0;
+      lv_bar_set_value(ui_bBrakePedal, canMsg.brakePedalValue * 1000, LV_ANIM_OFF);
+      Serial.print(canMsg.brakePedalValue);
+      Serial.print("\n");
+    }
+    else if (message.buf[0] == 33)
+    {
 
-        lv_bar_set_value(ui_bBrakePedal, canMsg.brakePedalValue*1000, LV_ANIM_OFF);
-        Serial.print(canMsg.brakePedalValue);
-        Serial.print("\n");
-      }else if(message.buf[0]==33){
+      // change line below when type of pedal_value_t changes
+      uint16_t newValue16 = message.buf[1] | (message.buf[2] << 8);
+      canMsg.gasPedalValue = (float)newValue16 / 65535.0;
 
-        // change line below when type of pedal_value_t changes
-        uint16_t newValue16 = message.buf[1] | (message.buf[2] << 8);
-        canMsg.gasPedalValue = (float)newValue16 / 65535.0;
-
-        lv_bar_set_value(ui_bGasPedal, canMsg.gasPedalValue*1000, LV_ANIM_OFF);
-        Serial.print(canMsg.gasPedalValue);
-        Serial.print("\n");
-      } else {
-        Serial.println("Unknown message ID");
-        return;
-      } 
+      lv_bar_set_value(ui_bGasPedal, canMsg.gasPedalValue * 1000, LV_ANIM_OFF);
+      Serial.print(canMsg.gasPedalValue);
+      Serial.print("\n");
     }
   }
   lv_timer_handler(); /* let the GUI do its work */
-  delay(1/UPDATE_RATE);
+  delay(0.01);
 }
