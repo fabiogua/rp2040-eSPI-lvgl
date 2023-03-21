@@ -189,24 +189,23 @@ void loop()
         switch (canMsg.shutdown)
         {
         case 1:
-          lv_label_set_text(ui_lShutdown, "before BSPD open");
+          lv_label_set_text(ui_lShutdown, "BSPD");
           break;
         case 2:
-          lv_label_set_text(ui_lShutdown, "BSPD open");
+          lv_label_set_text(ui_lShutdown, "Mainhoop or HVD");
           break;
         case 3:
-          lv_label_set_text(ui_lShutdown, "TS ON open");
+          lv_label_set_text(ui_lShutdown, "Dashboard or Inertia or BOTS");
           break;
         case 4:
-          lv_label_set_text(ui_lShutdown, "BOTS open");
+          lv_label_set_text(ui_lShutdown, "BMS");
           break;
         case 5:
-          lv_label_set_text(ui_lShutdown, "Error Storage");
+          lv_label_set_text(ui_lShutdown, "IMD");
           break;
-        case 6:
-          lv_label_set_text(ui_lShutdown, "TSMS open");
-          break;
+
         default:
+          lv_label_set_text(ui_lShutdown, "HV Closed");
           break;
         }
 
