@@ -119,7 +119,6 @@ void setup()
   LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
 
   Serial.println(LVGL_Arduino);
-  Serial.println("I am LVGL_Arduino");
 
   lv_init();
 
@@ -160,7 +159,6 @@ void setup()
   lv_img_set_src(cursor_obj, LV_SYMBOL_GPS);    // Set the image source
   lv_indev_set_cursor(mouse_indev, cursor_obj); // Connect the image  object to the driver
 */
-  Serial.println("Setup done");
 }
 
 void loop()
@@ -183,8 +181,8 @@ void loop()
         canMsg.speed = ((uint16_t)message.buf[4] << 8 | message.buf[5]) / 100.0;
         canMsg.current = ((uint16_t)message.buf[6] << 8 | message.buf[7]) / 100.0;
 
-        Serial.print(canMsg.status);
-        Serial.print("\t");
+        // Serial.print(canMsg.status);
+        // Serial.print("\t");
 
         switch (canMsg.shutdown)
         {
@@ -192,10 +190,10 @@ void loop()
           lv_label_set_text(ui_lShutdown, "BSPD");
           break;
         case 2:
-          lv_label_set_text(ui_lShutdown, "Mainhoop or HVD");
+          lv_label_set_text(ui_lShutdown, "Mainhoop or HVD or Dashboard or Inertia or BOTS");
           break;
         case 3:
-          lv_label_set_text(ui_lShutdown, "Dashboard or Inertia or BOTS");
+          lv_label_set_text(ui_lShutdown, "TS-On");
           break;
         case 4:
           lv_label_set_text(ui_lShutdown, "BMS");
@@ -209,17 +207,17 @@ void loop()
           break;
         }
 
-        Serial.print(canMsg.shutdown);
-        Serial.print("\t");
+        // Serial.print(canMsg.shutdown);
+        // Serial.print("\t");
 
         lv_label_set_text_fmt(ui_lSpeed, "%.2fkm/h", canMsg.speed);
-        Serial.print(canMsg.speed);
-        Serial.print("\t");
+        /// Serial.print(canMsg.speed);
+        // Serial.print("\t");
 
         lv_label_set_text_fmt(ui_lCurrent, "%.2fA", canMsg.current);
         lv_bar_set_value(ui_bCurrent, canMsg.current, LV_ANIM_OFF);
-        Serial.print(canMsg.current);
-        Serial.print("\n");
+        // Serial.print(canMsg.current);
+        // Serial.print("\n");
       }
       else if (message.buf[1] == 1)
       {
@@ -230,65 +228,70 @@ void loop()
 
         lv_label_set_text_fmt(ui_lMotorTemperature, "%.2f°C", canMsg.motorTemp);
         lv_bar_set_value(ui_bMotorTemperature, canMsg.motorTemp, LV_ANIM_OFF);
-        Serial.print(canMsg.motorTemp);
-        Serial.print("\t");
+        // Serial.print(canMsg.motorTemp);
+        // Serial.print("\t");
 
         lv_label_set_text_fmt(ui_lAirTemperature, "%.2f°C", canMsg.airTemp);
         lv_bar_set_value(ui_bAirTemperature, canMsg.motorTemp, LV_ANIM_OFF);
-        Serial.print(canMsg.airTemp);
-        Serial.print("\t");
+        // Serial.print(canMsg.airTemp);
+        // Serial.print("\t");
 
         lv_label_set_text_fmt(ui_lBatteryVoltage, "%.2f V", canMsg.dcVoltage);
         lv_bar_set_value(ui_bBatteryVoltage, canMsg.dcVoltage, LV_ANIM_OFF);
-        Serial.print(canMsg.dcVoltage);
-        Serial.print("\n");
+        // Serial.print(canMsg.dcVoltage);
+        // Serial.print("\n");
       }
       else if (message.buf[1] == 2)
       {
         canMsg.power = ((uint32_t)message.buf[2] << 24) | (message.buf[3] << 16) | (message.buf[4] << 8) | message.buf[5];
         canMsg.powermode = message.buf[6];
 
-        Serial.print(canMsg.power);
-        Serial.print("\n");
+        // Serial.print(canMsg.power);
+        // Serial.print("\n");
 
         switch (canMsg.powermode)
         {
+        case 0:
+          lv_label_set_text(ui_lPowermode, "60KW");
+          break;
         case 1:
-          lv_label_set_text(ui_lPowermode, "Fast");
+          lv_label_set_text(ui_lPowermode, "40KW");
           break;
         case 2:
-          lv_label_set_text(ui_lPowermode, "Faast");
+          lv_label_set_text(ui_lPowermode, "80KW");
           break;
         default:
-          lv_label_set_text(ui_lPowermode, "Normal");
+          lv_label_set_text(ui_lPowermode, "EROOR");
           break;
         }
 
-        Serial.print(canMsg.powermode);
-        Serial.print("\n");
+        // Serial.print(canMsg.powermode);
+        // Serial.print("\n");
       }
-    }
-    else if (message.buf[0] == 32)
-    {
-      uint16_t newValue16 = message.buf[1] | (message.buf[2] << 8);
-      canMsg.brakePedalValue = (float)newValue16 / 65535.0;
+      else if (message.buf[1] == 3)
+      {
 
-      lv_bar_set_value(ui_bBrakePedal, canMsg.brakePedalValue * 1000, LV_ANIM_OFF);
-      Serial.print(canMsg.brakePedalValue);
-      Serial.print("\n");
-    }
-    else if (message.buf[0] == 33)
-    {
+        uint16_t gasPedalValue = message.buf[2] | (message.buf[3] << 8);
+        canMsg.gasPedalValue = (float)gasPedalValue / 65535.0;
 
-      // change line below when type of pedal_value_t changes
-      uint16_t newValue16 = message.buf[1] | (message.buf[2] << 8);
-      canMsg.gasPedalValue = (float)newValue16 / 65535.0;
+        lv_bar_set_value(ui_bGasPedal, (uint16_t)(canMsg.gasPedalValue * 1000), LV_ANIM_OFF);
+#ifdef DEBUG_GAS
+        Serial.print("Gas:\t");
+        Serial.print(canMsg.gasPedalValue);
+        Serial.print("\n");
+#endif
+        uint16_t brakePedalValue = message.buf[4] | (message.buf[5] << 8);
+        canMsg.brakePedalValue = (float)brakePedalValue / 65535.0;
 
-      lv_bar_set_value(ui_bGasPedal, canMsg.gasPedalValue * 1000, LV_ANIM_OFF);
-      Serial.print(canMsg.gasPedalValue);
-      Serial.print("\n");
+        lv_bar_set_value(ui_bBrakePedal, (uint16_t)(canMsg.brakePedalValue * 1000), LV_ANIM_OFF);
+#ifdef DEBUG_BRAKE
+        Serial.print("Brake:\t");
+        Serial.print(canMsg.brakePedalValue);
+        Serial.print("\n");
+#endif
+      }
     }
   }
   lv_timer_handler(); /* let the GUI do its work */
-  delay(0.01);
+  // delay(0.01);
 }
